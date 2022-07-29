@@ -23,7 +23,7 @@ jobs:
         env:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: secret
-          POSTGRES_DB: BB-postgres
+          POSTGRES_DB: BB-DB
         # Health checks
         options: >-
           --health-cmd pg_isready
