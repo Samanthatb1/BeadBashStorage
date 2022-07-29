@@ -17,6 +17,9 @@ jobs:
       postgres:
         # Docker Hub image
         image: postgres:12
+        ports:
+          # Maps port on service container to the host
+          - 5432:5432
         env:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: secret
@@ -42,7 +45,6 @@ jobs:
     - name: Install golang-migrate dependency
       run: |
         curl -L https://github.com/golang-migrate/migrate/releases/download/v4.12.2/migrate.linux-amd64.tar.gz | tar xvz
-        ls -l
         sudo mv migrate.linux-amd64 /usr/bin/migrate
         which migrate
 
