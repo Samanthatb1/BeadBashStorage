@@ -37,3 +37,7 @@ RETURNING *;
 -- name: DeleteOrder :exec
 DELETE FROM orders
 WHERE order_id = $1;
+
+-- name: DeleteAllOrderFromUser :exec
+DELETE FROM orders
+WHERE username = $1;

@@ -59,6 +59,16 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (Order
 	return i, err
 }
 
+const deleteAllOrderFromUser = `-- name: DeleteAllOrderFromUser :exec
+DELETE FROM orders
+WHERE username = $1
+`
+
+func (q *Queries) DeleteAllOrderFromUser(ctx context.Context, username string) error {
+	_, err := q.db.ExecContext(ctx, deleteAllOrderFromUser, username)
+	return err
+}
+
 const deleteOrder = `-- name: DeleteOrder :exec
 DELETE FROM orders
 WHERE order_id = $1
@@ -109,7 +119,7 @@ func (q *Queries) ListAllOrders(ctx context.Context, arg ListAllOrdersParams) ([
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Order
+	items := []Order{}
 	for rows.Next() {
 		var i Order
 		if err := rows.Scan(
@@ -147,7 +157,7 @@ func (q *Queries) ListOrdersByUsername(ctx context.Context, username string) ([]
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Order
+	items := []Order{}
 	for rows.Next() {
 		var i Order
 		if err := rows.Scan(

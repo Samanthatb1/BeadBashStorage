@@ -44,6 +44,10 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 	return tx.Commit()
 } 
 
+/********* TRANSACTIONS *********/
+
+/********* New Order *********/
+
 type NewOrderTxParams struct {
 	Username         string  `json:"username"`
 	FullName         string  `json:"full_name"`
@@ -117,7 +121,7 @@ func (store *Store) NewOrderTx(ctx context.Context, args NewOrderTxParams) (newO
 	return result, err
 }
 
-/***************************************/
+/********* Delete Order *********/
 
 type DeleteOrderTxParams struct {
 	OrderID        int64   `json:"order_id"`
@@ -125,7 +129,7 @@ type DeleteOrderTxParams struct {
 
 type deleteOrderResult struct {
 	Status string `json:"deletion_status"`
-	PurchasedItem string `json:"purchased_item"`
+	DeletedItem string `json:"deleted_item"`
 }
 
 // Order is deleted -> Must update the associated user information
@@ -136,14 +140,62 @@ func (store *Store) DeleteOrderTx(ctx context.Context, args DeleteOrderTxParams)
 	err := store.execTx(ctx, func(q *Queries) error{
 		// Make sure the order exists before deleting it
 		order, err := q.GetOrderById(ctx, args.OrderID)
+		if err == sql.ErrNoRows { return err }
+
+		// Delete the order
+		err = q.DeleteOrder(ctx, order.OrderID)
+		if err != nil {return err}
+
+		// Get the corresponding user
+		user, err := q.GetUserById(ctx, order.AccountID)
+		if err != nil {return err}
+
+		// Decrease user's total order amount
+		_, err = q.UpdateUser(ctx, UpdateUserParams{
+			ID : user.ID, 
+			TotalOrders: (user.TotalOrders - 1),
+		})
+		if err != nil {return err}
+
+		result.DeletedItem = order.PurchasedItem
+		result.Status = "Deleted"
+		return nil // No Error
+	})
+
+	return result, err
+}
+
+/********* Delete User *********/
+
+type DeleteUserTxParams struct {
+	ID        int64   `json:"id"`
+}
+
+type deleteUserResult struct {
+	Status string `json:"deletion_status"`
+}
+
+// User is deleted -> Must update the associated user information
+func (store *Store) DeleteUserTx(ctx context.Context, args DeleteUserTxParams) (deleteUserResult, error){
+	var result deleteUserResult
+
+	// Begin Transaction
+	err := store.execTx(ctx, func(q *Queries) error{
+		// Make sure the user exists before deleting it
+		user, err := q.GetUserById(ctx, args.ID)
 		if err == sql.ErrNoRows { 
 			return err
 		}
 
-		err = q.DeleteOrder(ctx, order.OrderID)
+		// Delete all orders that correspond to that user
+		err = q.DeleteAllOrderFromUser(ctx, user.Username)
 		if err != nil {return err}
 
-		result.PurchasedItem = order.PurchasedItem
+		// Delete User
+		err = q.DeleteUser(ctx, user.Username)
+		if err != nil {return err}
+
+		// Send Result
 		result.Status = "Deleted"
 		return nil // No Error
 	})

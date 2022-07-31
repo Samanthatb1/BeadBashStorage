@@ -19,4 +19,7 @@ sqlc:
 test:
 	go test -v -cover ./...
 
-.PHONY: createDB dropDB startPostgresContainer migrate_up migrate_down sqlc
+server:
+	go run main.go
+
+.PHONY: createDB dropDB startPostgresContainer migrate_up migrate_down sqlc server
