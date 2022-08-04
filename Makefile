@@ -1,5 +1,5 @@
 startPostgresContainer:
-	docker run --name BB-postgres --network bb-storage-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
+	docker run --name BB-postgres --network bb-storage-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:14-alpine
 
 createDB:
 	docker exec -it BB-postgres createdb --username=root --owner=root BB-DB
