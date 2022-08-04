@@ -10,9 +10,12 @@ services:
     build:
       context: . #current root foler
       dockerfile: Dockerfile #find dockerfile
+    image: samanthatb1/bead-bash-orders  ## goes to your repository on Docker Hub
     ports:
       - "8080:8080"
     environment:
       - DB_SOURCE=postgres://root:secret@postgres:5432/BB-DB?sslmode=disable
+    depends_on:
+      - postgres
     entrypoint: ["/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh"] #ensure postgres finishes before api
     command: ["/app/main"]

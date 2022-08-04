@@ -7,6 +7,10 @@ import (
 	"github.com/samanthatb1/beadBashStorage/api"
 	db "github.com/samanthatb1/beadBashStorage/db/sqlc"
 	"github.com/samanthatb1/beadBashStorage/util"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 // Starts server and DB connection
@@ -16,6 +20,9 @@ func main() {
 	if err != nil {
 		log.Fatal("Cannot load configurations (file / env): " , err)
 	}
+
+	// Run Migrations
+	runDBMigration(config.MigrationURL, config.DBSource)
 
 	// Connect to postgres DB
 	conn, err := sql.Open(config.DBDriver, config.DBSource)
@@ -27,4 +34,17 @@ func main() {
 	// Start server by passing in an address to run on
 	err = server.Start(config.ServerAddress)
 	if err != nil { log.Fatal("Cannot start server: ", err) }
+}
+
+func runDBMigration(migrationURL string, dbSource string) {
+	migration, err := migrate.New(migrationURL, dbSource)
+	if err != nil {
+		log.Fatal("cannot create new migrate instance:", err)
+	}
+
+	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatal("failed to run migrate up:", err)
+	}
+
+	log.Println("db migrated successfully")
 }

@@ -8,10 +8,10 @@ dropDB:
 	docker exec -it BB-postgres dropdb BB-DB
 
 migrate_up:
-	migrate -path db/migrations -database "postgres://root:secret@localhost:5432/BB-DB?sslmode=disable" -verbose up
+	migrate -path db/migration -database "postgres://root:secret@localhost:5432/BB-DB?sslmode=disable" -verbose up
 
 migrate_down:
-	migrate -path db/migrations -database "postgres://root:secret@localhost:5432/BB-DB?sslmode=disable" -verbose down
+	migrate -path db/migration -database "postgres://root:secret@localhost:5432/BB-DB?sslmode=disable" -verbose down
 
 sqlc:
 	sqlc generate
