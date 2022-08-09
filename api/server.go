@@ -31,7 +31,7 @@ func NewServer(store *db.Store) *Server {
 	router.DELETE("/orders/:order_id", server.deleteOrderById) // Params: order_id
 	router.PATCH("/orders", server.updateOrderById) // Params: order_id
 	router.GET("/orders/:username", server.listOrdersOfUser) // Params: username
-	router.GET("/orders/all", server.listAllOrders)
+	router.GET("/orders/all", server.listAllOrders) // Params: page_id, page_size
 
 	server.router = router // Assign router
 	return server

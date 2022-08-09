@@ -34,12 +34,14 @@ func main() {
 	// Start server by passing in an address to run on
 	err = server.Start(config.ServerAddress)
 	if err != nil { log.Fatal("Cannot start server: ", err) }
+	
+	log.Println("server is up and running")
 }
 
 func runDBMigration(migrationURL string, dbSource string) {
 	migration, err := migrate.New(migrationURL, dbSource)
 	if err != nil {
-		log.Fatal("cannot create new migrate instance:", err)
+		log.Fatal("cannot create new migrate instance:", err, "migrationURL: " , migrationURL, " db source: " , dbSource)
 	}
 
 	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
