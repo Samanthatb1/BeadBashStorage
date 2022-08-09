@@ -165,34 +165,3 @@ func (server *Server) deleteUserByUsername(ctx *gin.Context){
 	// Success, send user to client
 	ctx.JSON(http.StatusOK, gin.H{"Deleted" : user.Username})
 }
-
-/**** UPDATE USER BY ID ****/
-type updateUserIdRequest struct {
-	Id    int64 `uri:"id" binding:"required,min=1"`
-}
-
-// Add updateUserById function to the server instance
-func (server *Server) updateUserById(ctx *gin.Context){
-	var reqBody updateUserIdRequest
-
-	// If params are invalid
-	if err := ctx.ShouldBindUri(&reqBody); err != nil { 
-		ctx.JSON(http.StatusBadRequest, errResponseToJSON(err))
-		return
-	}
-
-	// Access the store we constructed through the server instance
-	user, err := server.store.GetUserById(ctx, reqBody.Id)
-	// Check if the DB fetch was successful 
-	if err != nil {
-		if err == sql.ErrNoRows { // If that id doesnt exist
-			ctx.JSON(http.StatusNotFound, gin.H{"error" : "User doesn't exist"})
-			return
-		}
-		ctx.JSON(http.StatusInternalServerError, errResponseToJSON(err))
-		return
-	}
-
-	// Success, send user to client
-	ctx.JSON(http.StatusOK, user)
-}

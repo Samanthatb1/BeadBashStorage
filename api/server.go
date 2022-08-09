@@ -20,18 +20,17 @@ func NewServer(store *db.Store) *Server {
 	// Routes
 
 	/* User */
-	router.POST("/users", server.createUser) // Params: full_name, username
 	router.GET("/users/:identifier", server.getUserByUsername) // Params: username
 	router.GET("/users/all", server.listUsers) // Params: page_id, page_size
+	router.POST("/users", server.createUser) // Params: full_name, username
 	router.DELETE("/users/:username", server.deleteUserByUsername) // Params: id
-	router.PATCH("/users/:id", server.updateUserById)
 	
 	/* Order */
+	router.GET("/orders/:username", server.listOrdersOfUser) // Params: username
+	router.GET("/orders/all", server.listAllOrders) // Params: page_id, page_size
 	router.POST("/orders", server.createOrder) // Params: username, name, all purchase info
 	router.DELETE("/orders/:order_id", server.deleteOrderById) // Params: order_id
 	router.PATCH("/orders", server.updateOrderById) // Params: order_id
-	router.GET("/orders/:username", server.listOrdersOfUser) // Params: username
-	router.GET("/orders/all", server.listAllOrders) // Params: page_id, page_size
 
 	server.router = router // Assign router
 	return server
