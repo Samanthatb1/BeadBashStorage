@@ -34,6 +34,9 @@ $ docker run --name postgres --network bb-network -e POSTGRES_USER=root -e POSTG
 $ docker run --name api --network bb-network -e DB_SOURCE=postgresql://root:secret@postgres:5432/BB-DB?sslmode=disable -e SERVER_ADDRESS=0.0.0.0:8080 -e DB_DRIVER=postgres -e ENVIRONMENT=production -p 8080:8080 -e GIN_MODE=release  -d samanthatb1/bead-bash-orders
 ```
 
+# Tests
+With the GitHub repository cloned run `make test` **or** click [GitHub Actions](https://github.com/Samanthatb1/beadBashStorage/actions) to checkout the current test state
+
 # API Endpoints
 ## Data Layout
 User:
