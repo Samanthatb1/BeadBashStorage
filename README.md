@@ -20,6 +20,8 @@ $ make createDB
 $ make migrate_up
 $ make server
 ```
+6. Program will run on `http://localhost:8080/` check out [Endpoints](#endpoints) for more
+
 --
 ## 2) Run without cloning code with Docker Hub
 1. Grab the docker image from [Docker Hub](https://hub.docker.com/repository/docker/samanthatb1/bead-bash-orders/general) by running :
@@ -33,9 +35,10 @@ $ docker run --name postgres --network bb-network -e POSTGRES_USER=root -e POSTG
 
 $ docker run --name api --network bb-network -e DB_SOURCE=postgresql://root:secret@postgres:5432/BB-DB?sslmode=disable -e SERVER_ADDRESS=0.0.0.0:8080 -e DB_DRIVER=postgres -e ENVIRONMENT=production -p 8080:8080 -e GIN_MODE=release  -d samanthatb1/bead-bash-orders
 ```
+3. Program will run on `http://localhost:8080/` check out [Endpoints](#endpoints) for more
 
 # Tests
-With the GitHub repository cloned run `make test` **or** click [GitHub Actions](https://github.com/Samanthatb1/beadBashStorage/actions) to checkout the current test state
+With the GitHub repository cloned run `make test` **or** click [GitHub Actions](https://github.com/Samanthatb1/beadBashStorage/actions) to check out the current test state
 
 # API Endpoints
 ## Data Layout
@@ -139,3 +142,13 @@ Edit Order
 
 ## DB Schema
   ![Database Image](./images/DB_Tables.png?raw=true)
+
+## Info
+Packages used include: 
+- [Viper](https://github.com/spf13/viper) for environment variables
+- [Golang Migrate](https://github.com/golang-migrate/migrate) for DB migrations
+- [sqlc](https://github.com/kyleconroy/sqlc) to generate interfaces to SQL queries
+- [Testify](https://github.com/stretchr/testify) for unit testing
+- [Gin](https://github.com/gin-gonic/gin) for the HTTP web framework
+- [Pq](https://github.com/lib/pq) for the postgres driver
+- Docker's [Postgres](https://hub.docker.com/_/postgres/) image for the DB
