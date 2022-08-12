@@ -1,4 +1,4 @@
-# Bead Bash Storage
+# Studio Storage
 Database to store a history of users and oders for the jewelry business Bead Beash Studio
 
 # Docker Usage
